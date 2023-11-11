@@ -12,5 +12,6 @@ func main() {
 	//demo.Hash(redis)
 	//demo.List(redis)
 	//demo.Set(redis)
-	demo.SortedSet(redis)
+	//demo.SortedSet(redis)
+	demo.Publisher(redis, "channel")
 }
