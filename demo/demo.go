@@ -58,3 +58,44 @@ func Func3(client *redis.Client) {
 		fmt.Println(res)
 	}
 }
+
+func ScanKeyDemo1(client *redis.Client) {
+	ctx := context.TODO()
+	var cursor uint64
+	for {
+		var keys []string
+		var err error
+		// 将redis中所有以prefix:为前缀的key都扫描出来
+		keys, cursor, err = client.Scan(ctx, cursor, "prefix:*", 0).Result()
+		if err != nil {
+			panic(err)
+		}
+
+		for _, key := range keys {
+			fmt.Println("key", key)
+		}
+
+		if cursor == 0 { // no more keys
+			break
+		}
+	}
+}
+
+// ScanKeysDemo2 针对这种需要遍历大量key的场景，go-redis中提供了一个简化方法——Iterator，其使用示例如下。
+func ScanKeysDemo2(client *redis.Client) {
+	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
+	defer cancel()
+	// 按前缀扫描key
+	iter := client.Scan(ctx, 0, "prefix:*", 0).Iterator()
+	if iter.Err() != nil {
+		panic(iter.Err())
+	}
+	for iter.Next(ctx) {
+		fmt.Println("keys", iter.Val())
+	}
+	//此外，对于 Redis 中的 set、hash、zset 数据类型，go-redis 也支持类似的遍历方法。
+
+	//iter := client.SScan(ctx, "set-key", 0, "prefix:*", 0).Iterator()
+	//iter := client.HScan(ctx, "hash-key", 0, "prefix:*", 0).Iterator()
+	//iter := client.ZScan(ctx, "sorted-hash-key", 0, "prefix:*", 0).Iterator()
+}

@@ -9,7 +9,7 @@ import (
 
 func Redis() *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "43.138.56.2:6379", // 数据库地址
+		Addr:     "43.138.73.97:6379", // 数据库地址
 		Username: "default",
 		Password: "redis654321",
 		DB:       0,

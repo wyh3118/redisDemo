@@ -80,5 +80,14 @@ func String(client *redis.Client) {
 		fmt.Println("expire number 20 second")
 	}
 
+	// Keys
+	// 以下命令查找所有以k开头的key
+	result, err := client.Keys(ctx, "k*").Result()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(result)
+	}
+
 	client.Del(ctx, "k1", "k2", "k3")
 }
