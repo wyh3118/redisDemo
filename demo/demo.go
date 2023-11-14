@@ -86,7 +86,7 @@ func ScanKeysDemo2(client *redis.Client) {
 	ctx, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
 	// 按前缀扫描key
-	iter := client.Scan(ctx, 0, "prefix:*", 0).Iterator()
+	iter := client.Scan(ctx, 0, "*", 0).Iterator()
 	if iter.Err() != nil {
 		panic(iter.Err())
 	}
@@ -98,4 +98,24 @@ func ScanKeysDemo2(client *redis.Client) {
 	//iter := client.SScan(ctx, "set-key", 0, "prefix:*", 0).Iterator()
 	//iter := client.HScan(ctx, "hash-key", 0, "prefix:*", 0).Iterator()
 	//iter := client.ZScan(ctx, "sorted-hash-key", 0, "prefix:*", 0).Iterator()
+}
+
+// DelKeysByMatch 删除匹配的字段
+func DelKeysByMatch(client *redis.Client, match string) {
+	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*500)
+	defer cancel()
+
+	iterator := client.Scan(ctx, 0, match, 0).Iterator()
+	for iterator.Next(ctx) {
+		result, err := client.Del(ctx, iterator.Val()).Result()
+		if err != nil {
+			fmt.Println(err)
+		} else {
+			fmt.Println("delete: ", result)
+		}
+	}
+
+	if iterator.Err() != nil {
+		fmt.Println(iterator.Err())
+	}
 }
