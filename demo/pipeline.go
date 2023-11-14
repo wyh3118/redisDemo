@@ -49,10 +49,10 @@ func Pipelined(client *redis.Client) {
 	fmt.Println(incr.Val())
 }
 
-// TxPipeline Redis是单线程执行命令的，因此单个命令始终是原子的，但是来自不同客户端的两个给定命令可以依次执行，
-// 例如在它们之间交替执行。但是，Multi/exec能够确保在multi/exec两个语句之间的命令之间没有其他客户端正在执行命令。
-// 在这种场景我们需要使用 TxPipeline 或 TxPipelined 方法将 pipeline 命令使用 MULTI 和EXEC包裹起来。
 func TxPipeline(client *redis.Client) {
+	// TxPipeline Redis是单线程执行命令的，因此单个命令始终是原子的，但是来自不同客户端的两个给定命令可以依次执行，
+	// 例如在它们之间交替执行。但是，Multi/exec能够确保在multi/exec两个语句之间的命令之间没有其他客户端正在执行命令。
+	// 在这种场景我们需要使用 TxPipeline 或 TxPipelined 方法将 pipeline 命令使用 MULTI 和EXEC包裹起来。
 	ctx, cancel := context.WithTimeout(context.TODO(), time.Millisecond*500)
 	defer cancel()
 
